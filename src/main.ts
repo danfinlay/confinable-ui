@@ -1,11 +1,5 @@
 import './style.css'
-import {
-  createDoc,
-  IConfinableElement,
-  IConfinableDoc,
-  IObservableObject,
-  IListener
-} from './doc.ts';
+import { createDoc } from './doc.ts';
 import { makeGrain } from './grain.ts';
 
 const counter = makeGrain(0);
