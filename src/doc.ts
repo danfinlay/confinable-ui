@@ -4,7 +4,7 @@ export type IConfinableElement = {
   push: (childOrChildren: IConfinableElement | IConfinableElement[]) => void,
   pushChild: (child: IConfinableElement) => void,
   pushChildren: (children: IConfinableElement[]) => void,
-  onClick: (cb: () => void) => void,
+  onClick: (cb: () => void) => IConfinableElement,
   follow: (grain: IObservableObject) => IConfinableElement,
 }
 
