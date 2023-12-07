@@ -1,7 +1,7 @@
 export type IConfinableElement = {
   getChildren: () => IConfinableElement[],
   text: (text: string) => IConfinableElement,
-  push: (childOrChildren: IConfinableElement | IConfinableElement[]) => void,
+  push: (childOrChildren: IConfinableElement | IConfinableElement[]) => IConfinableElement,
   pushChild: (child: IConfinableElement) => void,
   pushChildren: (children: IConfinableElement[]) => void,
   onClick: (cb: () => void) => IConfinableElement,
@@ -15,6 +15,8 @@ export type IConfinableDoc = {
   confineElement: (el: IConfinableElement) => IConfinableElement,
   root: IConfinableElement,
 }
+
+export type ICreateFunc = (elType: string) => IConfinableElement;
 
 type IClickEvent = {
   preventDefault: () => void,
@@ -32,7 +34,7 @@ export function createDoc (htmlElement: HTMLElement): IConfinableDoc {
     console.log(el);
     const children: IConfinableElement[] = [];
 
-    const pushChild = (child: IConfinableElement | IFrozenObject) => {
+    const pushChild = (child: IConfinableElement) => {
       console.log('pushing child', child);
       if (proxyMap.has(child)) {
         child = proxyMap.get(child)!;
@@ -74,33 +76,41 @@ export function createDoc (htmlElement: HTMLElement): IConfinableDoc {
         });
         return wrappedEl;
       },
-      push: (childOrChildren: IConfinableElement | IConfinableElement[]) => {
+      push: (childOrChildren: IConfinableElement | IConfinableElement[]): IConfinableElement => {
+        if (!childOrChildren) return wrappedEl;
+
         if (Array.isArray(childOrChildren)) {
           childOrChildren.forEach(pushChild);
         } else {
           pushChild(childOrChildren);
         }
+        return wrappedEl;
       },
       pushChild,
       pushChildren: (children: IConfinableElement[]) => {
         console.log('pushing children');
         children.forEach(pushChild);
       },
+      toString: () => {
+        `ConfinedElement(${elType})`
+      }
     }
     wrappedElMap.set(wrappedEl, el);
     return wrappedEl;
  
   }
 
-  const confinedStub: IConfinableElement = Object.freeze({
+  const confinedStub: IConfinableElement = {
     getChildren: () => [],
     text: () => confinedStub,
     pushChild: () => {},
     pushChildren: () => {},
-    onClick: () => {},
-    follow: () => {},
+    onClick: () => {
+      return { ...confinedStub };
+    },
+    follow: () => { return { ...confinedStub }},
     push: () => {},
-  })
+  }
   function confineElement (el: IConfinableElement): IConfinableElement {
     const proxy = Object.freeze(Object.create(confinedStub));
     proxyMap.set(proxy, el);
