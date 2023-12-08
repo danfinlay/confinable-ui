@@ -12,7 +12,7 @@ import { IObservableObject } from "./grain";
 
 export type IConfinableDoc = {
   create: (elType: string) => IConfinableElement,
-  confineElement: (el: IConfinableElement) => IConfinableElement,
+  makeOpaqueProxy: (el: IConfinableElement) => IConfinableElement,
   root: IConfinableElement,
 }
 
@@ -111,7 +111,7 @@ export function createDoc (htmlElement: HTMLElement): IConfinableDoc {
     follow: () => { return { ...confinedStub }},
     push: () => {},
   }
-  function confineElement (el: IConfinableElement): IConfinableElement {
+  function makeOpaqueProxy (el: IConfinableElement): IConfinableElement {
     const proxy = Object.freeze(Object.create(confinedStub));
     proxyMap.set(proxy, el);
     return proxy;
@@ -123,7 +123,7 @@ export function createDoc (htmlElement: HTMLElement): IConfinableDoc {
 
   return {
     create,
-    confineElement,
+    makeOpaqueProxy: makeOpaqueProxy,
     root,
   }
 }

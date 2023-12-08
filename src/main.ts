@@ -1,7 +1,7 @@
 import './style.css'
 import { createDoc } from './doc.ts';
 import { makeGrain } from './grain.ts';
-import { createGuestHype } from './createGuestHype.ts'
+import { untrustedHypeComponent } from './untrustedHypeComponent.ts'
 
 const counter = makeGrain(0);
 
@@ -14,5 +14,5 @@ doc.root.push([
     console.log('clicked!');
     await counter.set(await counter.get() + 1);
   }),
-  createGuestHype(doc.confineElement(doc.create('p').follow(counter)), doc.create)
+  untrustedHypeComponent(doc.makeOpaqueProxy(doc.create('p').follow(counter)), doc.create)
 ]);

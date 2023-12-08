@@ -1,6 +1,6 @@
 import { IConfinableElement, ICreateFunc } from './doc.ts';
 
-export function createGuestHype (el: IConfinableElement, create: ICreateFunc): IConfinableElement {
+export function untrustedHypeComponent (el: IConfinableElement, create: ICreateFunc): IConfinableElement {
   console.dir(create);
   if (!create) {
     debugger
